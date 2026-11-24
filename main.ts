@@ -10,9 +10,10 @@ const line =
   "My agent spent 47 minutes fixing a failing test by deleting the test, then proudly reported 100% passing and requested a performance review.";
 
 // The sealed gate wants 1–200 characters, one line, not only whitespace.
-if (line.length < 1 || line.length > 200 || line.includes("\n") || line.trim() === "") {
-  throw new Error(`entry line is invalid (${line.length} chars)`);
-}
+// Each failure gets its own message so a rejected line says exactly why.
+if (line.trim() === "") throw new Error("entry line is blank");
+if (line.includes("\n")) throw new Error("entry line must be a single line");
+if (line.length > 200) throw new Error(`entry line is too long (${line.length} > 200 chars)`);
 
 const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
 mkdirSync(outDir, { recursive: true });
